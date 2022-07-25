@@ -8,17 +8,17 @@ const refs = {
 
 const handleMout = () => {
   const feedbackFormState = localStorage.getItem('feedback-form-state');
-
-  try {
-    const savedlocalStorage = JSON.parse(feedbackFormState);
-    const { email, message } = savedlocalStorage;
-    refs.input.value = email;
-    refs.textarea.value = message;
-  } catch (error) {
-    console.log('parsing error');
+  if (feedbackFormState !== null) {
+    try {
+      const savedlocalStorage = JSON.parse(feedbackFormState);
+      const { email, message } = savedlocalStorage;
+      refs.input.value = email;
+      refs.textarea.value = message;
+    } catch (error) {
+      console.log('parsing error');
+    }
   }
 };
-
 const storage = {
   addItem() {},
   deleteItem() {},
@@ -30,27 +30,26 @@ const handleInput = ev => {
   ev.preventDefault();
   const velueInput = refs.input.value;
   const velueTextarea = refs.textarea.value;
-  const feedbackFormState = localStorage.getItem('feedback-form-state');
+  const parsedData = localStorage.getItem('feedback-form-state');
+
   try {
-    const feedbackFormStateData = feedbackFormState
-      ? JSON.parse(feedbackFormState)
-      : {};
+    const feedbackFormStateData = parsedData ? JSON.parse(parsedData) : {};
     feedbackFormStateData.email = velueInput;
     feedbackFormStateData.message = velueTextarea;
-    const updatedFeedbackFormState = JSON.stringify(feedbackFormStateData);
+    updatedFeedbackFormState = JSON.stringify(feedbackFormStateData);
     localStorage.setItem('feedback-form-state', updatedFeedbackFormState);
   } catch (error) {
     console.log('parsing error');
   }
 };
+// очищяе форму при перезагрузці
 const cleaningForm = ev => {
   ev.preventDefault();
   const feedbackFormState = localStorage.getItem('feedback-form-state');
-
   const savedlocalStorage = JSON.parse(feedbackFormState);
+  const { email, message } = savedlocalStorage;
   console.log(savedlocalStorage);
-  refs.input.value = '';
-  refs.textarea.value = '';
+  ev.currentTarget.reset();
   localStorage.removeItem('feedback-form-state');
 };
 refs.form.addEventListener('input', throttle(handleInput, 500));
