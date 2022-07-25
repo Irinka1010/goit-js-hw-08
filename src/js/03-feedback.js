@@ -5,7 +5,7 @@ const refs = {
   textarea: document.querySelector('textarea'),
   submit: document.querySelector('button'),
 };
-
+//  запускається при перезагрузці сторінки
 const handleMout = () => {
   const feedbackFormState = localStorage.getItem('feedback-form-state');
   if (feedbackFormState !== null) {
@@ -25,7 +25,7 @@ const storage = {
   clear() {},
   riadItem() {},
 };
-
+// при введенні даних в імпут
 const handleInput = ev => {
   ev.preventDefault();
   const velueInput = refs.input.value;
@@ -42,7 +42,7 @@ const handleInput = ev => {
     console.log('parsing error');
   }
 };
-// очищяе форму при перезагрузці
+// очищує форму при submit
 const cleaningForm = ev => {
   ev.preventDefault();
   const feedbackFormState = localStorage.getItem('feedback-form-state');
