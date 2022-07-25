@@ -28,7 +28,8 @@ const handleInput = ev => {
   const velueTextarea = refs.textarea.value;
 
   try {
-    const feedbackData = feedback ? JSON.parse(feedback) : {};
+    const feedbackInput = localStorage.getItem(STORAGE_KEY);
+    const feedbackData = feedbackInput ? JSON.parse(feedbackInput) : {};
     feedbackData.email = velueInput;
     feedbackData.message = velueTextarea;
     updatedFeedbackData = JSON.stringify(feedbackData);
