@@ -5,13 +5,15 @@ const refs = {
   textarea: document.querySelector('textarea'),
   submit: document.querySelector('button'),
 };
+const STORAGE_KEY = 'feedback-form-state';
+const feedback = localStorage.getItem(STORAGE_KEY);
+const formData = JSON.parse(feedback);
+
 //  запускається при перезагрузці сторінки
 const handleMout = () => {
-  const feedbackFormState = localStorage.getItem('feedback-form-state');
-  if (feedbackFormState !== null) {
+  if (feedback !== null) {
     try {
-      const savedlocalStorage = JSON.parse(feedbackFormState);
-      const { email, message } = savedlocalStorage;
+      const { email, message } = formData;
       refs.input.value = email;
       refs.textarea.value = message;
     } catch (error) {
@@ -19,25 +21,18 @@ const handleMout = () => {
     }
   }
 };
-const storage = {
-  addItem() {},
-  deleteItem() {},
-  clear() {},
-  riadItem() {},
-};
 // при введенні даних в імпут
 const handleInput = ev => {
   ev.preventDefault();
   const velueInput = refs.input.value;
   const velueTextarea = refs.textarea.value;
-  const parsedData = localStorage.getItem('feedback-form-state');
 
   try {
-    const feedbackFormStateData = parsedData ? JSON.parse(parsedData) : {};
-    feedbackFormStateData.email = velueInput;
-    feedbackFormStateData.message = velueTextarea;
-    updatedFeedbackFormState = JSON.stringify(feedbackFormStateData);
-    localStorage.setItem('feedback-form-state', updatedFeedbackFormState);
+    const feedbackData = feedback ? JSON.parse(feedback) : {};
+    feedbackData.email = velueInput;
+    feedbackData.message = velueTextarea;
+    updatedFeedbackData = JSON.stringify(feedbackData);
+    localStorage.setItem('feedback-form-state', updatedFeedbackData);
   } catch (error) {
     console.log('parsing error');
   }
@@ -45,12 +40,9 @@ const handleInput = ev => {
 // очищує форму при submit
 const cleaningForm = ev => {
   ev.preventDefault();
-  const feedbackFormState = localStorage.getItem('feedback-form-state');
-  const savedlocalStorage = JSON.parse(feedbackFormState);
-  const { email, message } = savedlocalStorage;
-  console.log(savedlocalStorage);
+  console.log(formData);
   ev.currentTarget.reset();
-  localStorage.removeItem('feedback-form-state');
+  localStorage.removeItem(STORAGE_KEY);
 };
 refs.form.addEventListener('input', throttle(handleInput, 500));
 addEventListener('DOMContentLoaded', handleMout);
