@@ -8,7 +8,6 @@ const LOCALSTORAGE_KEY = 'videoplayer-current-time';
 player.on('timeupdate', throttle(onRecordsEimePlayed, 1000));
 
 function onRecordsEimePlayed(time) {
-  console.log(time);
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(time));
 }
 onSavedTime();
