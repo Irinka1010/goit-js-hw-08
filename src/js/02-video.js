@@ -4,26 +4,19 @@ import throttle from 'lodash.throttle';
 const iframe = document.querySelector('#vimeo-player');
 const player = new Player(iframe);
 const LOCALSTORAGE_KEY = 'videoplayer-current-time';
-const savedTime = localStorage.getItem(LOCALSTORAGE_KEY);
 
-function recordsEimePlayed({ seconds }) {
-  localStorage.setItem(LOCALSTORAGE_KEY, seconds);
+player.on('timeupdate', throttle(onRecordsEimePlayed, 1000));
+
+function onRecordsEimePlayed(time) {
+  console.log(time);
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(time));
 }
-player.on('timeupdate', throttle(recordsEimePlayed, 1000));
+onSavedTime();
+function onSavedTime() {
+  const savedTimeVideo = localStorage.getItem(LOCALSTORAGE_KEY);
+  const parcedsavedTimeVideo = JSON.parse(savedTimeVideo);
 
-player
-  .setCurrentTime(savedTime)
-  .then(function (seconds) {
-    // seconds = the actual time that the player seeked to
-  })
-  .catch(function (error) {
-    switch (error.name) {
-      case 'RangeError':
-        // the time was less than 0 or greater than the video’s duration
-        break;
-
-      default:
-        // some other error occurred
-        break;
-    }
-  });
+  if (savedTimeVideo) {
+    player.setCurrentTime(parcedsavedTimeVideo.seconds);
+  }
+}
