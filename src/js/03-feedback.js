@@ -3,48 +3,41 @@ const refs = {
   form: document.querySelector('.feedback-form'),
   input: document.querySelector('input'),
   textarea: document.querySelector('textarea'),
-  submit: document.querySelector('button'),
 };
 const STORAGE_KEY = 'feedback-form-state';
-const feedback = localStorage.getItem(STORAGE_KEY);
-const formData = JSON.parse(feedback);
 
-//  запускається при перезагрузці сторінки
-const handleMout = () => {
-  if (feedback !== null) {
-    try {
-      const { email, message } = formData;
-      refs.input.value = email;
-      refs.textarea.value = message;
-    } catch (error) {
-      console.log('parsing error');
-    }
-  }
-};
-// при введенні даних в імпут
-const handleInput = ev => {
-  ev.preventDefault();
-  const velueInput = refs.input.value;
-  const velueTextarea = refs.textarea.value;
+// для збереження введенних у форму даних
+const frmData = {};
 
-  try {
-    const feedbackInput = localStorage.getItem(STORAGE_KEY);
-    const feedbackData = feedbackInput ? JSON.parse(feedbackInput) : {};
-    feedbackData.email = velueInput;
-    feedbackData.message = velueTextarea;
-    updatedFeedbackData = JSON.stringify(feedbackData);
-    localStorage.setItem('feedback-form-state', updatedFeedbackData);
-  } catch (error) {
-    console.log('parsing error');
-  }
-};
-// очищує форму при submit
-const cleaningForm = ev => {
+refs.form.addEventListener('input', throttle(handleInput, 500));
+refs.form.addEventListener('submit', onFormSubmit);
+
+populateTextarea();
+// зберігає дані з форми
+function handleInput(ev) {
+  frmData[ev.target.name] = ev.target.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(frmData));
+}
+// очищає форму і localStorage
+function onFormSubmit(ev) {
   ev.preventDefault();
-  console.log(formData);
+  console.log(frmData);
   ev.currentTarget.reset();
   localStorage.removeItem(STORAGE_KEY);
-};
-refs.form.addEventListener('input', throttle(handleInput, 500));
-addEventListener('DOMContentLoaded', handleMout);
-refs.form.addEventListener('submit', cleaningForm);
+}
+// при перезагрузці сторінки виводить дані в форму
+function populateTextarea() {
+  const parseData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  if (parseData) {
+    try {
+      parseData.email ? (refs.input.value = parseData.email) : '';
+      parseData.message ? (refs.textarea.value = parseData.message) : '';
+      frmData.email = refs.input.value;
+      frmData.message = refs.textarea.value;
+    } catch {
+      console.log(error.email);
+      console.log(error.message);
+    }
+  }
+}
